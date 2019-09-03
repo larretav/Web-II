@@ -77,3 +77,191 @@ x[1] = true; // Error,El tipo 'boolean' no es 'string | number'
 
 
 //Enum
+enum Direccion{
+    Up = 1,             // Si se le asigna un valor numerico primero, los siguientes valores empiezan desde el número especificado
+    Down = NaN,         // Si le ponemos un NaN despúes de haber inicializado un valor nos obliga a inicializar
+                        // el siguiente después de este, esto no solo pasa con Nan, pasa con String.length, etc.
+    
+    Left = "asdasd".length,
+    Right = 1 << 1      // También admiten operadores binarios
+};
+
+var c = Direccion.Up;
+console.log(Direccion.Down);
+
+//Enum sin asignación de valores
+enum Color{Rojo, Verde, Azul};
+let d: Color = Color.Verde;
+
+//Enum con asignación de valores
+enum Color2{ Rojo = 1, Verde = 2, Azul = 4 };
+let e: Color2 = Color2.Verde; // 2
+
+// Accediendo al valor de los atributos
+enum Color3 {Rojo = 1, Verde, Azul};
+let NombreColor: string = Color3[2];
+alert(NombreColor); // Verde
+
+//Ejemplo de comparación de Enum con Type Alias
+// FOO
+enum FooIdBrand {}
+type FooId = FooIdBrand & string;
+
+// BAR
+enum BarIdBrand {}
+type BarId = BarIdBrand & string;
+
+/* Demo */
+var fooId: FooId;
+var barId: BarId;
+
+// Por seguridad
+fooId = barId; // error
+barId = fooId; // error
+
+// Newing up
+fooId = 'foo' as FooId;
+barId = 'bar' as BarId;
+
+// Los dos tipos son compatibles con la base
+// que en este caso es string
+var str: string;
+str = fooId;
+str = barId;
+
+
+//Any
+let notSure: any = 4;
+notSure = "maybe a string instead";
+notSure = false;
+
+let notSure2: any = 4;
+notSure2.ifItExists(); // OK, ifItExists puede existir
+notSure2.toFixed(); // OK, toFixed existe, pero no es comprobado por el compilador
+let prettySure: Object = 4;
+prettySure.toFixed(); // Error: La propiedad 'toFixed' no existe en un 'Object'.
+
+let lista: any[] = [1, true, "free"];
+lista[1] = 100;
+
+
+//Void
+function WarnUser(): void {
+    alert('Este es un mensaje de advertencia');
+}
+//En variables solo se le pueden asignarl valores Null o Undefined (No recomendado)
+let sinuso: void = undefined; 
+
+
+//Let (se pueden declarar variables con Let y Var, Let con ámbito de bloque y Var no)
+//Con Var
+var foov = 123;
+if (true){
+    var foov = 456;
+}
+console.log(foov); //456
+
+//Con Let
+let fool = 123;
+if (true) {
+    fool = 456;
+}
+console.log(fool); //123
+
+
+//Const (Constantes)
+const foo = 123;
+foo = 456; // No permitido
+
+// Las constantes admiten objetos literales
+const foo2 = { bar: 123};
+foo2 = { bar: 456 }; //Error, no se puede modificar el objeto
+
+//Pero si se puede modificar las variables que contiene
+const foo3 = { bar: 123};
+foo3.bar = 456; //Permitido
+console.log(foo3); // { bar: 456 }
+
+// For In
+// En TypeScript
+let list3 = { a: 1, b: 2, c: 3 };
+
+for (let i in list3) {
+    console.log(list3[i]); // 1, 2, 3
+}
+
+// En Javascript
+var list4 = { a: 1, b: 2, c: 3 };
+
+for (var i in list4) {
+    console.log(list4[i]); // 1, 2, 3
+}
+
+// Accediendo al índice de una variable dentro de un objeto
+// TypeScript
+let list5 = {a: 1, b: 2, c:3};
+for(let i in list5){
+    console.log(i); // a, b, c
+}
+// Javascript
+var list6 = { a: 1, b: 2, c: 3 };
+for (var i in list6) {
+    console.log(i); // a, b, c
+}
+
+
+//For Of
+//Accediendo al valor de una variable
+//TypeScript
+let list7 = ["a", "b", "c"];
+for (let b of list7) {
+    console.log(b); // a, b, c
+}
+
+//Javascript
+var list_7 = ["a", "b", "c"];
+for (var j = 0, list_j = list_7; j < list_7.length; j++) {
+    var bj = list_7[j];
+    console.log(bj); // a, b, c
+}
+
+//Accediendo al valor de una variable dentro de un string
+//TypeScript
+let stringt = "¿soy yo a quien estás buscando?";
+for (let char of stringt) {
+    console.log(char); // ¿soy yo a quien estás buscando?
+}
+
+//Javascript
+var stringj = "¿soy yo a quien estás buscando?";
+for (var _i = 0, string_1 = stringj; _i < string_1.length; _i++) {
+    var char = string_1[_i];
+    console.log(char); // ¿soy yo a quien estás buscando?
+}
+
+//Accediendo al valor de una variable dentro de un objeto, el cual nos dará error:
+//TypeScript
+let objt = {a: 1, b: 2, c:3};
+for(let i of objt){
+    console.log(i); // Error
+}
+
+//Javascript
+var objj = { a: 1, b: 2, c: 3 };
+for (var _i = 0, obj_1 = objj; _i < obj_1.length; _i++) {
+    var i = obj_1[_i];
+    console.log(i); // Error
+}
+
+
+//Funciones
+// Este tipo de función hace referencia al objeto que llama a esta función
+setTimeout(function(){
+    console.log(this); // Elemento Que llama a la función
+}, 2000);
+
+//Este tipo de funciones, lo que hacen es que el this no hace referencia 
+//al padre sino al objeto que contiene la función
+setTimeOut(() => {
+    console.log(this);// Elemento que contiene esta función
+}, 2000);
