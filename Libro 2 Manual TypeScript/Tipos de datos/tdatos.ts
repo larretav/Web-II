@@ -262,6 +262,65 @@ setTimeout(function(){
 
 //Este tipo de funciones, lo que hacen es que el this no hace referencia 
 //al padre sino al objeto que contiene la función
-setTimeOut(() => {
+setTimeout( () => {
     console.log(this);// Elemento que contiene esta función
 }, 2000);
+
+// Evitar el tipo Any y filtrar solo por los tipos de datos que necesitamos
+function padLeft(value: string, padding: string | number) {
+    if(typeof padding === "number"){
+        return Array(padding + 1).join(" ") + value;
+    }
+    if(typeof padding === "string") {
+        return Array(padding.length + 1).join(" ") + value;
+    }
+    // Si existiera Any tendriamos que controlar la excepción
+    // Como buenas practicas y ya que este código al fin y al cabo
+    // será javascript y es vulnerable a inyeción siempre está bien
+    // realizar el control de las posibles excepciones
+    throw new Error(`Se esperaba String o Number, en '${padding}' `);
+}
+
+console.log(padLeft("hello", "aaa")); // Ejemplo de función con texto -> Funciona
+console.log(padLeft("hello", 5)); // Ejemplo de función con número -> Funciona
+console.log(padLeft("hello", true)); // Ejemplo de función con texto -> NO FUNCIONA (no compila)
+
+//Parametros opcionales
+// Compilado con --strictNullChecks true
+function validateEntity(e: Entity?) {
+    // Arrojará una excepción si e es una entidad tipo null o inválida
+}
+function processEntity(e: Entity?) {
+    validateEntity(e);
+    let s = e!.name; // Afirmar que e no es null y nombre de acceso
+}
+
+//Igualación de Funciones
+//Utilizando Fat Arrows
+let x1 = (a: number) => 0;
+let y1 = (b: number, s: string) => 0;
+
+y1 = x1; // OK
+x1 = y1; // Error
+
+let x2 = () => ({name: 'Alice'});
+let y2 = () => ({name: 'Alice', location: 'Seattle'});
+
+x2 = y2; // OK
+y2 = x2; // Error porque x() no tiene la propiedad location
+
+
+//Genericos
+//TypeScript
+function echo<T>(arg: T) : T {
+    return arg;
+}
+let f = echo<number>(1); // El typeof es Number
+let g = echo<String>("Hola mundo"); // El typeof es String
+
+// Javascript (Ya compilado)
+function echo2(arg) {
+    return arg;
+}
+var f2 = echo2(1); // El typeof es Number
+var g2 = echo2("Hola mundo"); // El typeof es String
